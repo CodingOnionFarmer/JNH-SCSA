@@ -3,6 +3,10 @@ import sys
 input = sys.stdin.readline
 
 
+def print(something):
+    sys.stdout.write(str(something) + '\n')
+
+
 class SegmentTree:
     def __init__(self, arr):
         self.arr = arr
