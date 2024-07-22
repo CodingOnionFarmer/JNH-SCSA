@@ -6,12 +6,12 @@ n = int(input())
 numbers = [int(input()) for _ in range(n)]
 
 
-def quick_sort(start, end):
+def merge_sort(start, end):
     if start == end:
         return
     mid = (start + end) // 2
-    quick_sort(start, mid)
-    quick_sort(mid + 1, end)
+    merge_sort(start, mid)
+    merge_sort(mid + 1, end)
     p1 = start
     p2 = mid + 1
     temp = []
@@ -33,5 +33,5 @@ def quick_sort(start, end):
     return
 
 
-quick_sort(0, n - 1)
+merge_sort(0, n - 1)
 print(*numbers, sep='\n')
