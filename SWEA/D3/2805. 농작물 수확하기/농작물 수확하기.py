@@ -1,13 +1,11 @@
 for tc in range(1, int(input()) + 1):
     n = int(input())
     ans = 0
-    half = n // 2
-    for i in range(half):
+    half = n >> 1
+    for i in range(half, 0, -1):
         line = input()
-        for j in range(half - i, half + i + 1):
-            ans += int(line[j])
+        ans += sum(map(int, line[i:n - i]))
     for i in range(half + 1):
         line = input()
-        for j in range(i, n - i):
-            ans += int(line[j])
+        ans += sum(map(int, line[i:n - i]))
     print(f'#{tc} {ans}')
