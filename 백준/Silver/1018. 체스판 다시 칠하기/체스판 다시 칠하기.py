@@ -1,21 +1,21 @@
+import sys
+
+input = sys.stdin.readline
+
 n, m = map(int, input().split())
 prefix_sum = [[0] * (m - 7) for _ in range(n)]  # prefix_sum[i][j]는 i행 j열부터 오른쪽으로 8칸에서 체스판과 같은 개수의 합
+white_is0 = {'W': 0, 'B': 1}
+board = [[0] * m for _ in range(n)]
 for i in range(n):
     line = input()
-    if i % 2:
-        compare_line = 'WB' * ((m + 1) // 2)
-    else:
-        compare_line = 'BW' * ((m + 1) // 2)
-    s = 0
     for j in range(8):
-        if line[j] == compare_line[j]:
-            s += 1
+        board[i][j] = (i + j + white_is0[line[j]]) % 2
+    s = sum(board[i][:8])
     prefix_sum[i][0] = s
     for j in range(8, m):
-        if line[j] == compare_line[j]:
-            s += 1
-        if line[j - 8] == compare_line[j - 8]:
-            s -= 1
+        board[i][j] = (i + j + white_is0[line[j]]) % 2
+        s += board[i][j]
+        s -= board[i][j - 8]
         prefix_sum[i][j - 7] = s
 
 least = 32  # 답이 32 초과인 경우는 없음
