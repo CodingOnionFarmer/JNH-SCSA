@@ -3,17 +3,21 @@ import sys
 input = sys.stdin.readline
 
 n, m = map(int, input().split())
-prefix_sum = [[0] * (m - 7) for _ in range(n)]  # prefix_sum[i][j]는 i행 j열부터 오른쪽으로 8칸에서 체스판과 같은 개수의 합
+prefix_sum = [[0] * (m - 7) for _ in range(n)]  # prefix_sum[i][j]는 i행 j열부터 오른쪽으로 8칸에서 체스판과 같은?다른? 개수의 합
 white_is0 = {'W': 0, 'B': 1}
-board = [[0] * m for _ in range(n)]
+board = []
+for i in range((n + 1) // 2):
+    board.append([0, 1] * ((m + 1) // 2))
+    board.append([1, 0] * ((m + 1) // 2))
 for i in range(n):
     line = input()
+    s = 0
     for j in range(8):
-        board[i][j] = (i + j + white_is0[line[j]]) % 2
-    s = sum(board[i][:8])
+        board[i][j] ^= white_is0[line[j]]
+        s += board[i][j]
     prefix_sum[i][0] = s
     for j in range(8, m):
-        board[i][j] = (i + j + white_is0[line[j]]) % 2
+        board[i][j] ^= white_is0[line[j]]
         s += board[i][j]
         s -= board[i][j - 8]
         prefix_sum[i][j - 7] = s
