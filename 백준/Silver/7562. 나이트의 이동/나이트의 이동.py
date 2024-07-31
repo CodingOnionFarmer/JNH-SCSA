@@ -27,18 +27,20 @@ for _ in range(tc):
         if cd_in_corner and x + y == 3:  # 4x4에서 둘 다 구석이고 가로나 세로로 3만큼만 떨어져 있을 때
             print(5)
             continue
-        elif x == 1 and y == 1:
+        elif x == 1 and y == 1:  # 한 개가 구석에 있고 한 개는 거기서 가로1,세로1만큼 떨어져 있을 때
             print(4)
             continue
-    elif cd_in_corner and x == 1 and y == 1:
+    elif cd_in_corner and x == 1 and y == 1:  # 위와 동일
         print(4)
         continue
 
     ans = 0
 
     # 중요 : greedy move의 근거는 needed_move에 진입하기 직전의 상태에 따른 횟수를 직접 카운트하여 경우의 수를 따져야 함
+    # x,y의 대소관계를 유지한 채로 한 번의 move 단위로 while문으로 수행할 수도 있다.
+    # 하지만 2번의 move를 묶어서 세 종류로 나누고, 논리적인 순서로 몇 번씩 수행할 지 알 수 있으므로 이렇게 하였다.
 
-    if y > 7 and x > 1:  # 가로 4 세로 2만큼 greedy move 최대한 수행
+    if y > 7:  # 가로 4 세로 2만큼 greedy move 최대한 수행
         # x,y의 대소관계가 깨지지 않고, x가 0보다 작아지지 않고, y가 4보다 작아지지 않는 최대한의 move
         move = min(y // 4 - 1, x // 2, (y - x) // 2)
         ans += move * 2
@@ -56,13 +58,8 @@ for _ in range(tc):
 
     if y > 7:  # x는 최대 5인 상태
         # 두 번 이동으로 가로로만 4 이동하는 move 수행
-        # y를 4씩 가능한 만큼 줄일 건데, x값을 줄일 수 있으면 가로4 세로2 move 한 번을 해서 줄여야 함
-        # 5,6에서 4,4로 진입하면 4번이지만 3,6이나 1,6에서 2,4나 0,4로 진입하면 2번으로 되기 때문
-        # 이런 경우가 실제로 안 나올 수도 있으나, 디버깅하기 어렵다고 판단하여 안전하게 체크
         # 그 외에는 두 번 이동으로 가로4만큼 이동하는 greedy move 수행
         y_move = y // 4 - 1
-        if x > 2:
-            x -= 2
         ans += y_move * 2
         y -= y_move * 4
 
