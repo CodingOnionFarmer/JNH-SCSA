@@ -1,18 +1,32 @@
 # set을 이용한 bfs
+# 이차원 좌표를 정수 하나로 바꿔서 효율 늘리는 시도
 
+
+import sys
+
+input = sys.stdin.readline
 
 n, m = map(int, input().split())
-maze = [list(input()) + ['0'] for _ in range(n)] + [['0'] * m]
-now = {(0, 0)}
+maze = []
+for _ in range(n):
+    line = input().rstrip('\n')
+    for num in line:
+        maze.append(int(num))
+    maze.append(0)
+for _ in range(m):
+    maze.append(0)
+m += 1
+goal = n * m - 2
+now = [0]
+maze[0] = 0
 step = 1
-directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
-while (n - 1, m - 1) not in now:
-    next_step = set()
-    for i, j in now:
-        maze[i][j] = '0'
-        for di, dj in directions:
-            if maze[i + di][j + dj] == '1':
-                next_step.add((i + di, j + dj))
+while maze[goal]:
+    next_step = []
+    for position in now:
+        for adj in (position + 1, position - 1, position + m, position - m):
+            if maze[adj]:
+                next_step.append(adj)
+                maze[adj] = 0
     step += 1
     now = next_step
 print(step)
