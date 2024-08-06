@@ -25,7 +25,5 @@ def guess(idx, correct, before2, before1):
     return
 
 
-for first in range(5):
-    for second in range(5):
-        guess(2, correct_cnt[0][first] + correct_cnt[1][second], first, second)
+guess(0, 0, -2, -1)
 print(ans)
