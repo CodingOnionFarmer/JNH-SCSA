@@ -1,3 +1,6 @@
+# 재귀함수 이용
+
+
 n = int(input())
 sequence = []
 chosen = [False] * (n + 1)
