@@ -35,5 +35,11 @@ for i in range(n):
                     ci += di[cd]
                     cj += dj[cd]
 
-ans = sum(any(visited[i][j]) for i in range(n) for j in range(m))
+ans = 0
+for i in range(n):
+    for j in range(m):
+        for d in range(4):
+            if visited[i][j][d]:
+                ans += 1
+                break
 print(ans)
