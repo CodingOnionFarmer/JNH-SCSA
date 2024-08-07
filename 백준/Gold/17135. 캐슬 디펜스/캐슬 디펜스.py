@@ -30,7 +30,7 @@ for a1 in range(m - 2):
                         p1 += 1
                         continue
 
-                    if (y1, x1) in dead:
+                    if y1 * m + x1 in dead:
                         p1 += 1
                         continue
 
@@ -44,7 +44,7 @@ for a1 in range(m - 2):
                     if y2 >= n - turn:
                         p2 += 1
                         continue
-                    if (y2, x2) in dead:
+                    if y2 * m + x2 in dead:
                         p2 += 1
                         continue
                     if d2 - turn <= d:
@@ -57,7 +57,7 @@ for a1 in range(m - 2):
                     if y3 >= n - turn:
                         p3 += 1
                         continue
-                    if (y3, x3) in dead:
+                    if y3 * m + x3 in dead:
                         p3 += 1
                         continue
                     if d3 - turn <= d:
@@ -66,7 +66,7 @@ for a1 in range(m - 2):
                     break
 
                 for y1, x1 in targets:
-                    dead.add((y1, x1))
+                    dead.add(y1 * m + x1)
                     killed += 1
 
             if killed > most_killed:
