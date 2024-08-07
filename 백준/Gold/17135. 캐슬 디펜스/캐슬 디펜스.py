@@ -15,7 +15,7 @@ most_killed = 0
 for a1 in range(m - 2):
     for a2 in range(a1 + 1, m - 1):
         for a3 in range(a2 + 1, m):
-            dead = [[False] * m for _ in range(n)]
+            dead = set()
             killed = 0
             p1 = p2 = p3 = 0
             for turn in range(n):
@@ -30,7 +30,7 @@ for a1 in range(m - 2):
                         p1 += 1
                         continue
 
-                    if dead[y1][x1]:
+                    if (y1, x1) in dead:
                         p1 += 1
                         continue
 
@@ -44,7 +44,7 @@ for a1 in range(m - 2):
                     if y2 >= n - turn:
                         p2 += 1
                         continue
-                    if dead[y2][x2]:
+                    if (y2, x2) in dead:
                         p2 += 1
                         continue
                     if d2 - turn <= d:
@@ -57,7 +57,7 @@ for a1 in range(m - 2):
                     if y3 >= n - turn:
                         p3 += 1
                         continue
-                    if dead[y3][x3]:
+                    if (y3, x3) in dead:
                         p3 += 1
                         continue
                     if d3 - turn <= d:
@@ -66,7 +66,7 @@ for a1 in range(m - 2):
                     break
 
                 for y1, x1 in targets:
-                    dead[y1][x1] = True
+                    dead.add((y1, x1))
                     killed += 1
 
             if killed > most_killed:
