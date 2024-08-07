@@ -5,13 +5,12 @@
 n = int(input())
 numbers = list(map(int, input().split()))
 numbers.sort()
-S = 0
-B = 0
+ans = 0
 for i in range(n >> 1):
-    S += numbers[i]
-    B += numbers[n - i - 1]
+    ans -= numbers[i]
+    ans += numbers[n - i - 1]
 
-ans = (B - S) << 1
+ans <<= 1
 mid = n >> 1
 if n & 1:
     ans -= min(numbers[mid] - numbers[mid - 1], numbers[mid + 1] - numbers[mid])
