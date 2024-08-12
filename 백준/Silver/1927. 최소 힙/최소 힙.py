@@ -3,15 +3,15 @@ import os, io, heapq
 input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
 n = int(input())
-min_heap = []
+priority_queue = []
 ans = []
-for _ in range(n):
+for i in range(n):
     x = int(input())
     if x:
-        heapq.heappush(min_heap, x)
+        heapq.heappush(priority_queue, x)
     else:
-        if not min_heap:
-            ans.append(0)
+        if priority_queue:
+            ans.append(heapq.heappop(priority_queue))
         else:
-            ans.append(heapq.heappop(min_heap))
+            ans.append(0)
 print(*ans, sep='\n')
