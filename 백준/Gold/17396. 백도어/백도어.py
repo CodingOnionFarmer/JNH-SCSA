@@ -1,5 +1,7 @@
 # 다익스트라, Dijkstra
 
+# 왜 맞은사람에 안뜨죠?;;
+
 
 import os, io, heapq
 
