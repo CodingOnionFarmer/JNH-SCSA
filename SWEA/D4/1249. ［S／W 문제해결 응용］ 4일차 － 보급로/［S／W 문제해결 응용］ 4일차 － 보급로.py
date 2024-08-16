@@ -2,25 +2,31 @@
 
 
 INF = 90001
-directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
+wall = 90002
 T = int(input())
 for tc in range(1, T + 1):
     n = int(input())
-    board = [list(map(int, list(input()))) for _ in range(n)]
-    visited = [[INF] * n for _ in range(n)]
-    q = [(0, 0, 0)]
-    visited[0][0] = 0
+    board = []
+    for _ in range(n):
+        line = input()
+        for char in line:
+            board.append(int(char))
+        board.append(wall)
+    board.extend([wall] * n)
+    n += 1
+    directions = (1, n, -n, -1)
+    distance = [INF] * (n * n)
+    q = {0}
+    distance[0] = 0
     while q:
-        nq = []
-        for ci, cj, ct in q:
-            if ct > visited[ci][cj]:
-                continue
-            for di, dj in directions:
-                ni, nj = ci + di, cj + dj
-                if 0 <= ni < n and 0 <= nj < n:
-                    nt = ct + board[ni][nj]
-                    if nt < visited[ni][nj]:
-                        visited[ni][nj] = nt
-                        nq.append((ni, nj, nt))
+        nq = set()
+        for c in q:
+            ct = distance[c]
+            for d in directions:
+                nn = c + d
+                nt = ct + board[nn]
+                if nt < distance[nn]:
+                    distance[nn] = nt
+                    nq.add(nn)
         q = nq
-    print(f'#{tc} {visited[n - 1][n - 1]}')
+    print(f'#{tc} {distance[n * (n - 1) - 2]}')
