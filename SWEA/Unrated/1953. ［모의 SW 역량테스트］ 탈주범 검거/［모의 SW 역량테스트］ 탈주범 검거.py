@@ -19,12 +19,12 @@ for tc in range(1, T + 1):
     now = {r * m + c}
     ans = 0
     while now and l:  # 시간이 다 되거나 더 갈 곳이 없을 때까지
+        ans += len(now)
         move = set()
         for position in now:
             ci, cj = position // m, position % m
             p = tunnel[ci][cj]
             tunnel[ci][cj] = 0
-            ans += 1
             for d in pipes[p]:
                 di, dj = directions[d]
                 ni, nj = ci + di, cj + dj
