@@ -3,6 +3,10 @@
 # 조건 꼼꼼히 파악 : 장애물, 벽 뿐만 아니라 이미 지나간 칸도 못 지나간다.
 # 지나간 칸을 장애물로 만들어버리면 될 것 같다.
 
+import os, io
+
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
 directions = ((), (-1, 0), (1, 0), (0, -1), (0, 1))  # 1위 2아래 3왼쪽 4오른쪽
 r, c = map(int, input().split())
 room = [[1] * c + [0] for _ in range(r)] + [[0] * c]  # 1이 지나갈 수 있는 곳, 0은 벽
