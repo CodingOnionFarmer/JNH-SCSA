@@ -6,6 +6,9 @@
 # 입력 순서를 잘 봐야 한다. 0번째-5번째, 1번째-3번째, 2번째-4번째가 연결되어 있다.
 # 처음에 밑면을 뭘로 둘 지 6가지 경우만 나눠서 각각 시행해 보면 된다.
 
+import os, io
+
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
 n = int(input())
 on_the_top = [1, 2, 3, 4, 5, 6]  # 현재까지 쌓은 주사위의 윗면
