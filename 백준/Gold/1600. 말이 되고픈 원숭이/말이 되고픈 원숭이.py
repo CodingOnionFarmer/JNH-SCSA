@@ -21,6 +21,8 @@ while q and visited[h - 1][w - 1] > k:
     step += 1
     nq = []
     for used, ci, cj in q:
+        if visited[ci][cj] < used:
+            continue
         for di, dj in directions:
             ni, nj = ci + di, cj + dj
             if trip[ni][nj] or visited[ni][nj] <= used:
