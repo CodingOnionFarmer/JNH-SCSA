@@ -1,7 +1,3 @@
-# bfs, 완전탐색, 구현
-# 방문 처리 관련 아이디어 추가
-
-
 k = int(input())
 w, h = map(int, input().split())
 trip = [list(map(int, input().split())) + [1, 1] for _ in range(h)] + [[1] * (w + 2) for _ in range(2)]
