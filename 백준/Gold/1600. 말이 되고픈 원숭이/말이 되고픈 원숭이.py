@@ -1,3 +1,5 @@
+# 또 또 나만 맞힌 사람 안올라간다...
+
 k = int(input())
 w, h = map(int, input().split())
 trip = [list(map(int, input().split())) + [1, 1] for _ in range(h)] + [[1] * (w + 2) for _ in range(2)]
