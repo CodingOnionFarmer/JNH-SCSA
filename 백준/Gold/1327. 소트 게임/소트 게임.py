@@ -1,3 +1,5 @@
+# ?
+
 def rev(number, idx):
     right_digit = (n - k - idx) * 3
     temp = number % (1 << right_digit)
