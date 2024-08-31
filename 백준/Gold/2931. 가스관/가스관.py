@@ -1,4 +1,5 @@
-directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
+dir_r = (0, 1, 0, -1)
+dir_c = (1, 0, -1, 0)
 
 opposite = (2, 3, 0, 1)
 
@@ -13,7 +14,7 @@ blocks = {
 }
 
 r, c = map(int, input().split())
-europe = [input() + '.' for _ in range(r)] + ['.' * c]
+europe = [input() for _ in range(r)]
 
 
 def solve():
@@ -22,10 +23,11 @@ def solve():
             if europe[i][j] == '.':
                 adj_gas = []
                 for d in range(4):
-                    di, dj = directions[d]
-                    adj = europe[i + di][j + dj]
-                    if adj in blocks and opposite[d] in blocks[adj]:
-                        adj_gas.append(d)
+                    ni, nj = i + dir_r[d], j + dir_c[d]
+                    if ni < r and nj < c:
+                        adj = europe[ni][nj]
+                        if adj in blocks and opposite[d] in blocks[adj]:
+                            adj_gas.append(d)
                 if adj_gas:
                     check = tuple(adj_gas)
                     for block in blocks:
