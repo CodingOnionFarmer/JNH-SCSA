@@ -21,7 +21,7 @@ def bfs():
         for fi, fj in fq:
             for di, dj in directions:
                 ni, nj = fi + di, fj + dj
-                if 0 <= ni < h and 0 <= nj < w and board[ni][nj] == '.':
+                if board[ni][nj] == '.':
                     board[ni][nj] = None
                     nfq.append((ni, nj))
         for si, sj in q:
@@ -43,7 +43,6 @@ def bfs():
 T = int(input())
 for tc in range(T):
     w, h = map(int, input().split())
-    board = [list(input()) for _ in range(h)]
-    visited = [[False] * w for _ in range(h)]
+    board = [list(input())+['#'] for _ in range(h)] + [['#']*w]
 
     bfs()
