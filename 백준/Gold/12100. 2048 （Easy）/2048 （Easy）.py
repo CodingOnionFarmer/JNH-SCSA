@@ -2,100 +2,147 @@ n = int(input())
 original_board = [list(map(int, input().split())) for _ in range(n)]
 original_biggest = max(max(line) for line in original_board)
 biggest = original_biggest
+board_sum = sum(sum(line) for line in original_board)
+maximal_biggest = biggest
+while maximal_biggest << 1 <= board_sum:
+    maximal_biggest <<= 1
 
-# 방향 : 오른,밑,왼,위로 밀기
 
-for move_code in range(1024):
-    board = [line[:] for line in original_board]
-    temp_biggest = original_biggest
-    for turn in range(5):
-        if temp_biggest << (5-turn) == biggest:
-            break
-
-        move = move_code % 4
-        move_code >>= 2
-
-        if not move:
-            for i in range(n):
-                moved_line_from_right = []
-                before = -1
-                for j in range(n - 1, -1, -1):
-                    num = board[i][j]
-                    if not num:
-                        continue
-                    if num == before:
-                        moved_line_from_right[-1] <<= 1
-                        before = -1
-                        if num == temp_biggest:
-                            temp_biggest <<= 1
-                    else:
-                        moved_line_from_right.append(num)
-                        before = num
-                    board[i][j] = 0
-                for idx, num in enumerate(moved_line_from_right, 1):
-                    board[i][n - idx] = num
-
-        elif move == 1:
-            for j in range(n):
-                moved_line_from_bottom = []
-                before = -1
-                for i in range(n - 1, -1, -1):
-                    num = board[i][j]
-                    if not num:
-                        continue
-                    if num == before:
-                        moved_line_from_bottom[-1] <<= 1
-                        before = -1
-                        if num == temp_biggest:
-                            temp_biggest <<= 1
-                    else:
-                        moved_line_from_bottom.append(num)
-                        before = num
-                    board[i][j] = 0
-                for idx, num in enumerate(moved_line_from_bottom, 1):
-                    board[n - idx][j] = num
-
-        elif move == 2:
-            for i in range(n):
-                moved_line_from_left = []
-                before = -1
-                for j in range(n):
-                    num = board[i][j]
-                    if not num:
-                        continue
-                    if num == before:
-                        moved_line_from_left[-1] <<= 1
-                        before = -1
-                        if num == temp_biggest:
-                            temp_biggest <<= 1
-                    else:
-                        moved_line_from_left.append(num)
-                        before = num
-                    board[i][j] = 0
-                for idx, num in enumerate(moved_line_from_left):
-                    board[i][idx] = num
-
-        else:
-            for j in range(n):
-                moved_line_from_top = []
-                before = -1
-                for i in range(n):
-                    num = board[i][j]
-                    if not num:
-                        continue
-                    if num == before:
-                        moved_line_from_top[-1] <<= 1
-                        before = -1
-                        if num == temp_biggest:
-                            temp_biggest <<= 1
-                    else:
-                        moved_line_from_top.append(num)
-                        before = num
-                    board[i][j] = 0
-                for idx, num in enumerate(moved_line_from_top):
-                    board[idx][j] = num
-                    
-    if temp_biggest > biggest:
+def move_right(board, depth, temp_biggest):
+    global biggest, maximal_biggest
+    if biggest == maximal_biggest:
+        return
+    if temp_biggest << (5 - depth) == biggest:
+        return
+    if depth == 5:
         biggest = temp_biggest
+        return
+    moved_board = [[0] * n for _ in range(n)]
+    for i in range(n):
+        p = n - 1
+        before = -1
+        for j in range(n - 1, -1, -1):
+            num = board[i][j]
+            if not num:
+                continue
+            if num == before:
+                if num == temp_biggest:
+                    temp_biggest <<= 1
+                moved_board[i][p + 1] <<= 1
+                before = -1
+            else:
+                moved_board[i][p] = num
+                before = num
+                p -= 1
+    move_right(moved_board, depth + 1, temp_biggest)
+    move_down(moved_board, depth + 1, temp_biggest)
+    move_left(moved_board, depth + 1, temp_biggest)
+    move_up(moved_board, depth + 1, temp_biggest)
+    return
+
+
+def move_down(board, depth, temp_biggest):
+    global biggest, maximal_biggest
+    if biggest == maximal_biggest:
+        return
+    if temp_biggest << (5 - depth) == biggest:
+        return
+    if depth == 5:
+        biggest = temp_biggest
+        return
+    moved_board = [[0] * n for _ in range(n)]
+    for j in range(n):
+        p = n - 1
+        before = -1
+        for i in range(n - 1, -1, -1):
+            num = board[i][j]
+            if not num:
+                continue
+            if num == before:
+                if num == temp_biggest:
+                    temp_biggest <<= 1
+                moved_board[p + 1][j] <<= 1
+                before = -1
+            else:
+                moved_board[p][j] = num
+                before = num
+                p -= 1
+    move_right(moved_board, depth + 1, temp_biggest)
+    move_down(moved_board, depth + 1, temp_biggest)
+    move_left(moved_board, depth + 1, temp_biggest)
+    move_up(moved_board, depth + 1, temp_biggest)
+    return
+
+
+def move_left(board, depth, temp_biggest):
+    global biggest, maximal_biggest
+    if biggest == maximal_biggest:
+        return
+    if temp_biggest << (5 - depth) == biggest:
+        return
+    if depth == 5:
+        biggest = temp_biggest
+        return
+    moved_board = [[0] * n for _ in range(n)]
+    for i in range(n):
+        p = 0
+        before = -1
+        for j in range(n):
+            num = board[i][j]
+            if not num:
+                continue
+            if num == before:
+                if num == temp_biggest:
+                    temp_biggest <<= 1
+                moved_board[i][p - 1] <<= 1
+                before = -1
+            else:
+                moved_board[i][p] = num
+                before = num
+                p += 1
+    move_right(moved_board, depth + 1, temp_biggest)
+    move_down(moved_board, depth + 1, temp_biggest)
+    move_left(moved_board, depth + 1, temp_biggest)
+    move_up(moved_board, depth + 1, temp_biggest)
+    return
+
+
+def move_up(board, depth, temp_biggest):
+    global biggest, maximal_biggest
+    if biggest == maximal_biggest:
+        return
+    if temp_biggest << (5 - depth) == biggest:
+        return
+    if depth == 5:
+        biggest = temp_biggest
+        return
+    moved_board = [[0] * n for _ in range(n)]
+    for j in range(n):
+        p = 0
+        before = -1
+        for i in range(n):
+            num = board[i][j]
+            if not num:
+                continue
+            if num == before:
+                if num == temp_biggest:
+                    temp_biggest <<= 1
+                moved_board[p - 1][j] <<= 1
+                before = -1
+            else:
+                moved_board[p][j] = num
+                before = num
+                p += 1
+    move_right(moved_board, depth + 1, temp_biggest)
+    move_down(moved_board, depth + 1, temp_biggest)
+    move_left(moved_board, depth + 1, temp_biggest)
+    move_up(moved_board, depth + 1, temp_biggest)
+    return
+
+
+move_right(original_board, 0, original_biggest)
+move_down(original_board, 0, original_biggest)
+move_left(original_board, 0, original_biggest)
+move_up(original_board, 0, original_biggest)
 
 print(biggest)
