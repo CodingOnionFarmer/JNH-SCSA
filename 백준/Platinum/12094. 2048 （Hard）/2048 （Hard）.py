@@ -15,7 +15,6 @@ def move_right(board, depth, temp_biggest, si, ei, sj, ej):
     if temp_biggest << (10 - depth) == biggest:
         return
     if depth == 10:
-        biggest = temp_biggest
         return
     moved_board = [[0] * n for _ in range(n)]
     nej = nsj = n - 1
@@ -28,6 +27,8 @@ def move_right(board, depth, temp_biggest, si, ei, sj, ej):
                 continue
             if num == before:
                 if num == temp_biggest:
+                    if temp_biggest == biggest:
+                        biggest = temp_biggest << 1
                     temp_biggest <<= 1
                 moved_board[i][p + 1] <<= 1
                 before = -1
@@ -38,10 +39,11 @@ def move_right(board, depth, temp_biggest, si, ei, sj, ej):
         p += 1
         if p < nsj:
             nsj = p
-    if nsj == sj and nej == ej:
+    if nej - nsj == ej - sj:
+        shift = nej - ej
         for i in range(si, ei + 1):
             for j in range(sj, ej + 1):
-                if board[i][j] != moved_board[i][j]:
+                if board[i][j] != moved_board[i][j + shift]:
                     move_right(moved_board, depth + 1, temp_biggest, si, ei, nsj, nej)
                     move_down(moved_board, depth + 1, temp_biggest, si, ei, nsj, nej)
                     move_left(moved_board, depth + 1, temp_biggest, si, ei, nsj, nej)
@@ -75,6 +77,8 @@ def move_down(board, depth, temp_biggest, si, ei, sj, ej):
                 continue
             if num == before:
                 if num == temp_biggest:
+                    if temp_biggest == biggest:
+                        biggest = temp_biggest << 1
                     temp_biggest <<= 1
                 moved_board[p + 1][j] <<= 1
                 before = -1
@@ -85,10 +89,11 @@ def move_down(board, depth, temp_biggest, si, ei, sj, ej):
         p += 1
         if p < nsi:
             nsi = p
-    if nsi == si and nei == ei:
+    if nei - nsi == ei - si:
+        shift = nei - ei
         for i in range(si, ei + 1):
             for j in range(sj, ej + 1):
-                if board[i][j] != moved_board[i][j]:
+                if board[i][j] != moved_board[i + shift][j]:
                     move_right(moved_board, depth + 1, temp_biggest, nsi, nei, sj, ej)
                     move_down(moved_board, depth + 1, temp_biggest, nsi, nei, sj, ej)
                     move_left(moved_board, depth + 1, temp_biggest, nsi, nei, sj, ej)
@@ -122,6 +127,8 @@ def move_left(board, depth, temp_biggest, si, ei, sj, ej):
                 continue
             if num == before:
                 if num == temp_biggest:
+                    if temp_biggest == biggest:
+                        biggest = temp_biggest << 1
                     temp_biggest <<= 1
                 moved_board[i][p - 1] <<= 1
                 before = -1
@@ -132,10 +139,11 @@ def move_left(board, depth, temp_biggest, si, ei, sj, ej):
         p -= 1
         if p > nej:
             nej = p
-    if nsj == sj and nej == ej:
+    if nej - nsj == ej - sj:
+        shift = nej - ej
         for i in range(si, ei + 1):
             for j in range(sj, ej + 1):
-                if board[i][j] != moved_board[i][j]:
+                if board[i][j] != moved_board[i][j + shift]:
                     move_right(moved_board, depth + 1, temp_biggest, si, ei, nsj, nej)
                     move_down(moved_board, depth + 1, temp_biggest, si, ei, nsj, nej)
                     move_left(moved_board, depth + 1, temp_biggest, si, ei, nsj, nej)
@@ -169,6 +177,8 @@ def move_up(board, depth, temp_biggest, si, ei, sj, ej):
                 continue
             if num == before:
                 if num == temp_biggest:
+                    if temp_biggest == biggest:
+                        biggest = temp_biggest << 1
                     temp_biggest <<= 1
                 moved_board[p - 1][j] <<= 1
                 before = -1
@@ -179,10 +189,11 @@ def move_up(board, depth, temp_biggest, si, ei, sj, ej):
         p -= 1
         if p > nei:
             nei = p
-    if nsi == si and nei == ei:
+    if nei - nsi == ei - si:
+        shift = nei - ei
         for i in range(si, ei + 1):
             for j in range(sj, ej + 1):
-                if board[i][j] != moved_board[i][j]:
+                if board[i][j] != moved_board[i + shift][j]:
                     move_right(moved_board, depth + 1, temp_biggest, nsi, nei, sj, ej)
                     move_down(moved_board, depth + 1, temp_biggest, nsi, nei, sj, ej)
                     move_left(moved_board, depth + 1, temp_biggest, nsi, nei, sj, ej)
