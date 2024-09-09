@@ -5,6 +5,10 @@ BOJ : 마법사 상어와 토네이도
 구상 완료 : 2시 12분
 테케 틀림 : 2시 39분, 2시 52분
 제출 시간 : 2시 58분
+소요 시간 : 52분
+실패 횟수 : 0회
+사용 메모리 : 115916KB
+실행 시간 : 216ms
 
 
 구상 때 생각한 것
@@ -85,13 +89,7 @@ def tornado(x, y, d):
     blow_5percent = sand // 20
     remain -= blow_5percent
 
-    # 와... ny+dy 해야되는데 nx+dy 해놓고 11분동안 찾았네....
     nnx, nny = nx + dx, ny + dy
-    # print('nnx:', nnx, 'nny:', nny)
-    # print('nx,ny:', nx, ny, 'dx,dy,d:', dx, dy, d)
-    #
-    # for line in board:
-    #     print(line)
     if oob(nnx, nny):
         blow_outside += blow_5percent
     else:
@@ -137,19 +135,107 @@ def tornado(x, y, d):
     return blow_outside
 
 
+def tornado_without_oob_check(x, y, d):
+    sand = board[x][y]
+    board[x][y] = 0
+    remain = sand
+    dx, dy = directions[d]
+    nx, ny = x + dx, y + dy
+
+    if sand < 10:
+        board[nx][ny] += remain
+        return 0
+    blow_outside = 0
+    blow_10percent = sand // 10
+    remain -= blow_10percent << 1
+    dl, dr = (d + 1) % 4, (d - 1) % 4
+    dlx, dly = directions[dl]
+    drx, dry = directions[dr]
+    nlx, nly, nrx, nry = nx + dlx, ny + dly, nx + drx, ny + dry
+    board[nlx][nly] += blow_10percent
+    board[nrx][nry] += blow_10percent
+
+    if sand < 15:
+        board[nx][ny] += remain
+        return blow_outside
+    blow_7percent = sand * 7 // 100
+    remain -= blow_7percent << 1
+    nlx, nly, nrx, nry = x + dlx, y + dly, x + drx, y + dry
+    board[nlx][nly] += blow_7percent
+    board[nrx][nry] += blow_7percent
+
+    if sand < 20:
+        board[nx][ny] += remain
+        return blow_outside
+    blow_5percent = sand // 20
+    remain -= blow_5percent
+
+    nnx, nny = nx + dx, ny + dy
+    board[nnx][nny] += blow_5percent
+
+    if sand < 50:
+        board[nx][ny] += remain
+        return blow_outside
+    blow_2percent = sand // 50
+    remain -= blow_2percent << 1
+    nlx, nly, nrx, nry = x + dlx * 2, y + dly * 2, x + drx * 2, y + dry * 2
+    board[nlx][nly] += blow_2percent
+    board[nrx][nry] += blow_2percent
+
+    if sand < 100:
+        board[nx][ny] += remain
+        return blow_outside
+    blow_1percent = sand // 100
+    remain -= blow_1percent << 1
+    nlx, nly, nrx, nry = x - dx + dlx, y - dy + dly, x - dx + drx, y - dy + dry
+    board[nlx][nly] += blow_1percent
+    board[nrx][nry] += blow_1percent
+
+    board[nx][ny] += remain
+    return blow_outside
+
+
 ci, cj = n >> 1, n >> 1
 blown = 0
-for c in range(n >> 1):
+
+# 바깥 2바퀴 제외하고는 oob 판정 안해도 됨
+for c in range(n - 4 >> 1):
+    # 왼쪽 이동
+    di, dj = directions[0]
+    for _ in range(c << 1 | 1):
+        ci += di
+        cj += dj
+        blown += tornado_without_oob_check(ci, cj, 0)
+
+    # 아래 이동
+    di, dj = directions[1]
+    for _ in range(c << 1 | 1):
+        ci += di
+        cj += dj
+        blown += tornado_without_oob_check(ci, cj, 1)
+
+    # 오른쪽 이동
+    di, dj = directions[2]
+    for _ in range(c + 1 << 1):
+        ci += di
+        cj += dj
+        blown += tornado_without_oob_check(ci, cj, 2)
+
+    # 위쪽 이동
+    di, dj = directions[3]
+    for _ in range(c + 1 << 1):
+        ci += di
+        cj += dj
+        blown += tornado_without_oob_check(ci, cj, 3)
+
+# 바깥 2바퀴
+for c in range(n - 4 >> 1, n >> 1):
     # 왼쪽 이동
     di, dj = directions[0]
     for _ in range(c << 1 | 1):
         ci += di
         cj += dj
         blown += tornado(ci, cj, 0)
-        # print('--------------')
-        # print(ci, cj, blown)
-        # for line in board:
-        #     print(line)
 
     # 아래 이동
     di, dj = directions[1]
@@ -157,10 +243,6 @@ for c in range(n >> 1):
         ci += di
         cj += dj
         blown += tornado(ci, cj, 1)
-        # print('--------------')
-        # print(ci, cj, blown)
-        # for line in board:
-        #     print(line)
 
     # 오른쪽 이동
     di, dj = directions[2]
@@ -168,10 +250,6 @@ for c in range(n >> 1):
         ci += di
         cj += dj
         blown += tornado(ci, cj, 2)
-        # print('--------------')
-        # print(ci, cj, blown)
-        # for line in board:
-        #     print(line)
 
     # 위쪽 이동
     di, dj = directions[3]
@@ -179,10 +257,6 @@ for c in range(n >> 1):
         ci += di
         cj += dj
         blown += tornado(ci, cj, 3)
-        # print('--------------')
-        # print(ci, cj, blown)
-        # for line in board:
-        #     print(line)
 
 # 라스트 왼쪽 이동
 di, dj = directions[0]
@@ -190,9 +264,5 @@ for _ in range(n - 1):
     ci += di
     cj += dj
     blown += tornado(ci, cj, 0)
-    # print('--------------')
-    # print(ci, cj, blown)
-    # for line in board:
-    #     print(line)
 
 print(blown)
