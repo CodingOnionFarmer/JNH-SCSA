@@ -46,7 +46,7 @@ def solve():
                         break
                     if killed + enemy_cnt[turn] <= ans:
                         break
-                    shoot = set()
+                    shoot = []
                     while a1a < enemies:
                         # distance는 원래 거리(적이 움직이기 전)이다.
                         # i는 편의상 인덱스를 뒤집어놨다 (맨 밑이 0이다)
@@ -64,7 +64,8 @@ def solve():
                                 a1a += 1
                                 continue
                             # 아직 안 지나갔고 유효 사거리고 살아있는 적이면 쏘는 것을 확정하고 종료
-                            shoot.add((i, j))
+                            if (i, j) not in shoot:
+                                shoot.append((i, j))
                             a1a += 1
                             break
                         # 아직 안 지나갔는데 유효 사거리 밖인 적이어도 종료 (사거리 우선 정렬했으므로 greedy하게 가능)
@@ -80,7 +81,8 @@ def solve():
                             if dead[i] & (1 << j):
                                 a2a += 1
                                 continue
-                            shoot.add((i, j))
+                            if (i, j) not in shoot:
+                                shoot.append((i, j))
                             a2a += 1
                             break
                         break
@@ -94,7 +96,8 @@ def solve():
                             if dead[i] & (1 << j):
                                 a3a += 1
                                 continue
-                            shoot.add((i, j))
+                            if (i, j) not in shoot:
+                                shoot.append((i, j))
                             a3a += 1
                             break
                         break
