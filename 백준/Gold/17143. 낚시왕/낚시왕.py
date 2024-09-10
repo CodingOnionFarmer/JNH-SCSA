@@ -1,12 +1,7 @@
-"""
-BOJ : 낚시왕
+import os, io
 
-시작 시간 : 9시 01분
-구상 완료 : 9시 03분
-제출 시간 : 9시 38분
-"""
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
-# 1위 2아래 3오른 4왼
 directions = (0, -1, 1, 1, -1)
 
 r, c, m = map(int, input().split())
@@ -27,10 +22,6 @@ for i in range(m):
 
 ans = 0
 for column in range(c):
-    # print('-------------------------')
-    # for line in board:
-    #     print(line)
-    # print(ans)
     for row in range(r):
         if board[row][column]:
             ans += board[row][column]
@@ -62,7 +53,6 @@ for column in range(c):
                 moved_where.add(x * c + ny)
         else:
             nx = x + directions[direction] * speed
-            # print(x,nx,y,speed,direction)
             if nx < 0:
                 nx = -nx
                 if nx >= r:
@@ -75,7 +65,6 @@ for column in range(c):
                     nx = -nx
                 else:
                     sharks[weight][1] = 3 - direction
-            # print(nx,y)
             if moved[nx][y] < weight:
                 moved[nx][y] = weight
                 moved_where.add(nx * c + y)
