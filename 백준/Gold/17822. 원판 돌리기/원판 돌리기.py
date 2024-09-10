@@ -1,14 +1,5 @@
-"""
-BOJ : 원판 돌리기
-
-시작 시간 : 2시 46분
-구상 완료 : 2시 50분
-테케 틀림 : 3시 18분
-제출 시간 : 3시 33분
-"""
-
 n, m, t = map(int, input().split())
-board = [list(map(int, input().split())) for _ in range(n)] + [[-50] * m]
+board = [list(map(int, input().split())) for _ in range(n)] + [[0] * m]
 line_rotated = [0] * n
 num_cnt = n * m
 num_sum = 0
@@ -16,70 +7,52 @@ for i in range(n):
     for j in range(m):
         num_sum += board[i][j]
 
-# for line in board:
-#     print(line)
-
 for query in range(t):
     if num_cnt <= 1:
         break
-
     x, d, k = map(int, input().split())
     if d:
         k = m - k
+
     for line_num in range(x, n + 1, x):
         line_num -= 1
         line_rotated[line_num] -= k
         if line_rotated[line_num] <= -m:
             line_rotated[line_num] += m
 
-    erase = [[False] * m for _ in range(n)]
-    same = False
+    erase = set()
 
     for i in range(n):
         lr = line_rotated[i]
         lr_up = line_rotated[i - 1]
         for j in range(m):
             num = board[i][j + lr]
-            if num == -50:
+            if not num:
                 continue
 
             left_num = board[i][j + lr - 1]
             up_num = board[i - 1][j + lr_up]
             if left_num == num:
-                same = True
-                if not erase[i][j + lr]:
-                    erase[i][j + lr] = True
-                    num_cnt -= 1
-                    num_sum -= num
-                if not erase[i][j + lr - 1]:
-                    erase[i][j + lr - 1] = True
-                    num_cnt -= 1
-                    num_sum -= num
-                if up_num == num and not erase[i - 1][j + lr_up]:
-                    erase[i - 1][j + lr_up] = True
-                    num_cnt -= 1
-                    num_sum -= num
+                erase.add(i * m + (j + lr) % m)
+                erase.add(i * m + (j + lr - 1) % m)
+                if up_num == num:
+                    erase.add((i - 1) % n * m + (j + lr_up) % m)
             elif up_num == num:
-                same = True
-                if not erase[i][j + lr]:
-                    erase[i][j + lr] = True
-                    num_cnt -= 1
-                    num_sum -= num
-                if not erase[i - 1][j + lr_up]:
-                    erase[i - 1][j + lr_up] = True
-                    num_cnt -= 1
-                    num_sum -= num
+                erase.add((i * m + (j + lr) % m))
+                erase.add((i - 1) % n * m + (j + lr_up) % m)
 
-    if same:
-        for r in range(n):
-            for c in range(m):
-                if erase[r][c]:
-                    board[r][c] = -50
+    if erase:
+        num_cnt -= len(erase)
+        for position in erase:
+            i, j = position // m, position % m
+            num_sum -= board[i][j]
+            board[i][j] = 0
+
     else:
         changed = 0
         for r in range(n):
             for c in range(m):
-                if board[r][c] == -50:
+                if not board[r][c]:
                     continue
                 is_num_over_average = board[r][c] * num_cnt
                 if is_num_over_average > num_sum:
@@ -90,10 +63,4 @@ for query in range(t):
                     changed += 1
         num_sum += changed
 
-    # for line in board:
-    #     print(line)
-
 print(num_sum)
-# for line in board:
-#     print(line)
-# print(line_rotated)
