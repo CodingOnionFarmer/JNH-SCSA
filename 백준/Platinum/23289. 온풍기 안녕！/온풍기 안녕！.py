@@ -46,6 +46,17 @@ for _ in range(w):
         wall[x][y][3] = True
         wall[x - 1][y][1] = True
 
+# 온도 교환용 인접 리스트(오른쪽과 밑으로만)
+adj = [[[] for __ in range(c)] for _ in range(r)]
+for i in range(r):
+    for j in range(c):
+        # 오른쪽
+        if not wall[i][j][0]:
+            adj[i][j].append((i, j + 1))
+        # 아래쪽
+        if not wall[i][j][1]:
+            adj[i][j].append((i + 1, j))
+
 # 히터 한번 틀면 오르는 온도
 heated = [[0] * c for _ in range(r)]
 for hx, hy, d in heaters:
@@ -94,28 +105,17 @@ for test in range(101):
     temp_change = [[0] * c for _ in range(r)]
     for i in range(r):
         for j in range(c):
-            # 오른쪽 뚫려있으면 오른쪽과 온도 교환
-            if not wall[i][j][0]:
-                diff = board[i][j] - board[i][j + 1]
+            # 미리 만든 인접 리스트 활용
+            for ni, nj in adj[i][j]:
+                diff = board[i][j] - board[ni][nj]
                 if diff > 3:
                     diff //= 4
                     temp_change[i][j] -= diff
-                    temp_change[i][j + 1] += diff
+                    temp_change[ni][nj] += diff
                 elif diff < -3:
                     diff = -diff // 4
                     temp_change[i][j] += diff
-                    temp_change[i][j + 1] -= diff
-            # 아래쪽 뚫려있으면 온도 교환
-            if not wall[i][j][1]:
-                diff = board[i][j] - board[i + 1][j]
-                if diff > 3:
-                    diff //= 4
-                    temp_change[i][j] -= diff
-                    temp_change[i + 1][j] += diff
-                elif diff < -3:
-                    diff = -diff // 4
-                    temp_change[i][j] += diff
-                    temp_change[i + 1][j] -= diff
+                    temp_change[ni][nj] -= diff
 
     for i in range(r):
         for j in range(c):
