@@ -1,38 +1,31 @@
-import sys
-
-input = sys.stdin.readline
-
 directions = (0, -1, 1, 1, -1)
 
 r, c, m = map(int, input().split())
-board = [[0] * c for _ in range(r)]
-where_shark = set()
-sharks = [[0, 0] for _ in range(10001)]
+board = {}
+sharks = {}
 for i in range(m):
     x, y, s, d, z = map(int, input().split())
     x -= 1
     y -= 1
-    board[x][y] = z
+    board[x * c + y] = z
     if d < 3:
         s %= 2 * r - 2
     else:
         s %= 2 * c - 2
     sharks[z] = [s, d]
-    where_shark.add(x * c + y)
 
 ans = 0
 for column in range(c):
     for row in range(r):
-        if board[row][column]:
-            ans += board[row][column]
-            board[row][column] = 0
-            where_shark.discard(row * c + column)
+        if column in board:
+            ans += board[column]
+            board.pop(column)
             break
-    moved = [[0] * c for _ in range(r)]
-    moved_where = set()
-    for position in where_shark:
+        column += c
+    moved = {}
+    for position in board:
         x, y = position // c, position % c
-        weight = board[x][y]
+        weight = board[position]
         speed, direction = sharks[weight]
         if direction > 2:
             ny = y + directions[direction] * speed
@@ -48,9 +41,9 @@ for column in range(c):
                     ny = -ny
                 else:
                     sharks[weight][1] = 7 - direction
-            if moved[x][ny] < weight:
-                moved[x][ny] = weight
-                moved_where.add(x * c + ny)
+            np = x*c + ny
+            if np not in moved or moved[np] < weight:
+                moved[np] = weight
         else:
             nx = x + directions[direction] * speed
             if nx < 0:
@@ -65,10 +58,9 @@ for column in range(c):
                     nx = -nx
                 else:
                     sharks[weight][1] = 3 - direction
-            if moved[nx][y] < weight:
-                moved[nx][y] = weight
-                moved_where.add(nx * c + y)
+            np = nx*c + y
+            if np not in moved or moved[np] < weight:
+                moved[np] = weight
     board = moved
-    where_shark = moved_where
 
 print(ans)
