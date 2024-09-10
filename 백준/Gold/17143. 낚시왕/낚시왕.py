@@ -1,3 +1,7 @@
+import os, io
+
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
 directions = (0, -1, 1, 1, -1)
 
 r, c, m = map(int, input().split())
@@ -41,7 +45,7 @@ for column in range(c):
                     ny = -ny
                 else:
                     sharks[weight][1] = 7 - direction
-            np = x*c + ny
+            np = x * c + ny
             if np not in moved or moved[np] < weight:
                 moved[np] = weight
         else:
@@ -58,7 +62,7 @@ for column in range(c):
                     nx = -nx
                 else:
                     sharks[weight][1] = 3 - direction
-            np = nx*c + y
+            np = nx * c + y
             if np not in moved or moved[np] < weight:
                 moved[np] = weight
     board = moved
