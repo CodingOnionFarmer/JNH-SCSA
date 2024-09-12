@@ -1,13 +1,13 @@
 sy = [input() for _ in range(5)]
 SY = [1 if sy[i][j] == 'Y' else 0 for i in range(5) for j in range(5)]
-adj = [[] for _ in range(25)]
+adj = [0] * 25
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 for i in range(5):
     for j in range(5):
         for di, dj in directions:
             ni, nj = i + di, j + dj
             if 0 <= ni < 5 and 0 <= nj < 5:
-                adj[5 * i + j].append(5 * ni + nj)
+                adj[5 * i + j] |= 1 << (5 * ni + nj)
 visited = set()
 
 
@@ -21,10 +21,7 @@ def dfs(depth, princesses, head, y):
         sit = 1 << i
         if sit & princesses:
             continue
-        for j in adj[i]:
-            if (1 << j) & princesses:
-                break
-        else:
+        if not adj[i] & princesses:
             continue
         one_more_princess = princesses | sit
         if one_more_princess not in visited:
