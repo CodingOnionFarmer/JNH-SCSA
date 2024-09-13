@@ -1,31 +1,14 @@
-"""
-BOJ : 모노미노도미노 2
+import os, io
 
-시작 시간 : 3시 10분
-구상 완료 : 3시 15분
-1회 오답 : 3시 47분
-2회 오답 : 4시 01분
-제출 시간 : 
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
-"""
-
-######################
-# 룩업 테이블부터 만들기
-# t x y 받아서 green에 떨굴 거랑 blue에 떨굴 거, 떨어지는 모양과 두께를 저장한다.
 blocks = [[[None] * 4 for x in range(4)] for t in range(4)]  # t가 0인 곳은 안 쓸 것
 for x in range(4):
     for y in range(4):
-        # 경계 넘어가는 입력 안준댔으니 딱히 예외처리 안해도됨
-        # 각 튜플은 green에 떨어지는 모양과 두께, blue에 떨어지는 모양과 두께 순이다.
         blocks[1][x][y] = (1 << y, 1, 1 << x, 1)
         blocks[2][x][y] = (3 << y, 1, 1 << x, 2)
         blocks[3][x][y] = (1 << y, 2, 3 << x, 1)
 
-# 이거 찍어서 복붙하면 위의 코드 생략하고 하드코딩도 가능
-# for line in blocks:
-#     print(line)
-
-# 마지막에 칸수 세는 용도
 cnt_blocks = [0] * 16
 for digit in range(4):
     bit = 1 << digit
@@ -33,14 +16,10 @@ for digit in range(4):
         if i & bit:
             cnt_blocks[i] += 1
 
-######################
-# 입력 받고 자료구조 만들기 (비트마스킹 활용)
 n = int(input())
-# Green의 각 행, Blue의 각 열을 0000~1111의 비트로 나타내기, 1이 블록이 있는 곳이다.
 G_board = [0] * 6
 B_board = [0] * 6
 
-######################
 score = 0
 for turn in range(n):
     t, x, y = map(int, input().split())
