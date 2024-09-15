@@ -1,13 +1,3 @@
-"""
-240915
-BOJ : 스도미노쿠
-
-시작 시간 : 4시 39분
-구상 완료 : 4시 50분
-제출 완료 : 5시 35분
-
-"""
-
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 pos = {alp + str(digit): (ord(alp) - 65, digit - 1) for alp in 'ABCDEFGHI' for digit in range(1, 10)}
 
