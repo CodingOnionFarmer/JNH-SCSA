@@ -13,27 +13,30 @@ BOJ : 숨바꼭질 5
 시작 시간 : 4시 59분
 4회 오답 : 5시 27분 (시간 초과)
 제출 시간 : 5시 43분
+2일차 소요 시간 : 44분
+총 소요 시간 : 65분
 
 """
 
 # 가지치기
 # 경우의 수 나누기
+# 리팩토링
 
 n, k = map(int, input().split())
-limit_speed = 0
-kk = k
-while kk <= 500000:
-    limit_speed += 1
-    kk += limit_speed
-max_k = kk - limit_speed
-limit_speed -= 1
+# limit_speed = 0
+# kk = k
+# while kk <= 500000:
+#     limit_speed += 1
+#     kk += limit_speed
+# max_k = kk - limit_speed
+# limit_speed -= 1
 
 reach_odd = [False] * 500001
 reach_even = [False] * 500001
 reach_even[n] = True
 q = [n]
 step = 0
-while k < max_k:
+while k < 500001:
     if step & 1:
         if reach_odd[k]:
             break
@@ -47,18 +50,18 @@ while k < max_k:
     if step & 1:
         for pos in q:
             for adj in (pos + 1, pos - 1, pos << 1):
-                if (max_k >> (limit_speed - step)) <= adj <= 500000 and not reach_odd[adj]:
+                if 0 <= adj <= 500000 and not reach_odd[adj]:
                     reach_odd[adj] = True
                     nq.append(adj)
     else:
         for pos in q:
             for adj in (pos + 1, pos - 1, pos << 1):
-                if (max_k >> (limit_speed - step)) <= adj <= 500000 and not reach_even[adj]:
+                if 0 <= adj <= 500000 and not reach_even[adj]:
                     reach_even[adj] = True
                     nq.append(adj)
     q = nq
 
-if step & 1 and not reach_odd[k] or not step & 1 and not reach_even[k]:
+if k > 500000 or step & 1 and not reach_odd[k] or not step & 1 and not reach_even[k]:
     print(-1)
 else:
     print(step)
