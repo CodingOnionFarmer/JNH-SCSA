@@ -1,3 +1,7 @@
+import os, io
+
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
 m = int(input())
 lines = []
 while True:
@@ -26,10 +30,7 @@ def solve():
         end = new_end
         idx += 1
         ans += 1
-    if end >= m:
-        print(ans)
-        return
-    print(0)
+    print(ans)
     return
 
 
