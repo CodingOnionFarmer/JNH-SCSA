@@ -14,12 +14,11 @@ for tc in range(1, T + 1):
     reception_who = [0] * n
     repair_ends = [0] * m
 
-    used_A = [False] * k
+    used_reception_id = [-1] * k
 
     customers_arrival_time = list(map(int, input().split()))
     time = 0
-    got_in_repair = 0
-    while got_in_repair < k:
+    while next_repair_customer_idx < k:
         while next_arrive_customer_idx < k:
             if customers_arrival_time[next_arrive_customer_idx] == time:
                 next_arrive_customer_idx += 1
@@ -30,19 +29,19 @@ for tc in range(1, T + 1):
             if when_end == time:
                 repair_waiting_queue.append(reception_who[reception_id])
                 when_end = reception_ends[reception_id] = -1
-            if when_end < time and next_reception_customer_idx < next_arrive_customer_idx:
+            if next_reception_customer_idx < next_arrive_customer_idx and when_end < time:
                 reception_who[reception_id] = next_reception_customer_idx
                 reception_ends[reception_id] = time + reception_time[reception_id]
-                if reception_id == a:
-                    used_A[next_reception_customer_idx] = True
+                used_reception_id[next_reception_customer_idx] = reception_id
                 next_reception_customer_idx += 1
 
         for repair_id, when_end in enumerate(repair_ends):
-            if when_end <= time and next_repair_customer_idx < len(repair_waiting_queue):
+            if next_repair_customer_idx == len(repair_waiting_queue):
+                break
+            if when_end <= time:
                 who = repair_waiting_queue[next_repair_customer_idx]
                 repair_ends[repair_id] = time + repair_time[repair_id]
-                got_in_repair += 1
-                if repair_id == b and used_A[who]:
+                if used_reception_id[who] == a and repair_id == b:
                     ans += who + 1
                 next_repair_customer_idx += 1
 
