@@ -1,76 +1,86 @@
+"""
+240929
+민코딩 : 커스텀 메인보드 생산
+BOJ : 다리 만들기 2
+
+시작 시간 : 2시 29분
+구상 완료 : 2시 34분
+제출 완료 : 2시 55분
+
+"""
+
+# 최소 스패닝 트리
+# BFS
+
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
 n, m = map(int, input().split())
-board = [list(map(int, input().split())) for _ in range(n)]
 oob = [[False] * m + [True] for _ in range(n)] + [[True] * m]
-visited = [[0] * m for _ in range(n)]
-island = 0
-distance = [[]]
+board = [list(map(int, input().split())) for _ in range(n)]
+piece_num = 2
+piece_distance = [[10] * 8 for _ in range(8)]
+
 for i in range(n):
     for j in range(m):
-        if board[i][j] and not visited[i][j]:
-            island += 1
-            visited[i][j] = island
-            distance.append([100] * island)
+        if board[i][j] == 1:
+            board[i][j] = piece_num
             q = [(i, j)]
             while q:
                 nq = []
                 for ci, cj in q:
                     for di, dj in directions:
                         ni, nj = ci + di, cj + dj
-                        if oob[ni][nj]:
+                        if oob[ni][nj] or board[ni][nj] == piece_num:
                             continue
                         if board[ni][nj]:
-                            if not visited[ni][nj]:
-                                visited[ni][nj] = island
-                                nq.append((ni, nj))
+                            board[ni][nj] = piece_num
+                            nq.append((ni, nj))
                         else:
-                            dist = 1
-                            while True:
+                            ni += di
+                            nj += dj
+                            if oob[ni][nj] or board[ni][nj]:
+                                continue
+                            cable = 2
+                            ni += di
+                            nj += dj
+                            while not oob[ni][nj]:
+                                num = board[ni][nj]
+                                if num:
+                                    if num != 1 and num != piece_num:
+                                        piece_distance[num][piece_num] = min(piece_distance[num][piece_num], cable)
+                                    break
                                 ni += di
                                 nj += dj
-                                if oob[ni][nj]:
-                                    break
-                                if board[ni][nj]:
-                                    nv = visited[ni][nj]
-                                    if nv and nv != island:
-                                        if 1 < dist < distance[island][nv]:
-                                            distance[island][nv] = dist
-                                    break
-                                dist += 1
+                                cable += 1
                 q = nq
+            piece_num += 1
 
-head = [i for i in range(island + 1)]
-
-
-def union(a, b):
-    ha = find(a)
-    hb = find(b)
-    head[hb] = ha
-
-
-def find(a):
-    ha = head[a]
-    if a == ha:
-        return a
-    head[a] = find(ha)
-    return head[a]
-
-
-bridges = []
-for i in range(2, island + 1):
-    for j in range(1, i):
-        if distance[i][j] != 100:
-            bridges.append((distance[i][j], i, j))
-bridges.sort()
-connected = 0
+candidates = sorted([(piece_distance[i][j], i, j) for i in range(2, piece_num - 1) for j in range(i + 1, piece_num) if
+                     piece_distance[i][j] != 10])
+head = [i for i in range(piece_num)]
+connection = 0
 total_length = 0
-for d, i, j in bridges:
+
+
+def find(x):
+    if head[x] == x:
+        return x
+    return find(head[x])
+
+
+def union(x, y):
+    hx = find(x)
+    hy = find(y)
+    head[hy] = hx
+
+
+for d, i, j in candidates:
     if find(i) != find(j):
+        connection += 1
         total_length += d
         union(i, j)
-        connected += 1
-if connected < island - 1:
-    total_length = -1
-
-print(total_length)
+        if connection == piece_num - 3:
+            print(total_length)
+            break
+else:
+    print(-1)
