@@ -47,6 +47,8 @@ def solve():
                                     temp.append(board4)
                                     for i5 in {0, 1, 2, 3, 4} - {i1, i2, i3, i4}:
                                         for board5 in boards_rotated[i5]:
+                                            if not board5[4][4]:
+                                                continue
                                             temp.append(board5)
                                             visited = [[[False] * 5 for _ in range(5)] for _ in range(5)]
                                             visited[0][0][0] = True
