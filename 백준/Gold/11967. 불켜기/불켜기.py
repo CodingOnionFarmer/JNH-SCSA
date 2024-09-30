@@ -1,5 +1,5 @@
-import os, io
-input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+import sys
+input = sys.stdin.readline
 
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
