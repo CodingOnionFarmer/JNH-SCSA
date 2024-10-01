@@ -7,15 +7,14 @@ input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 dslr = ' DSLR'
 D = [(i << 1) % 10000 for i in range(10000)]
 S = [(i - 1) % 10000 for i in range(10000)]
-revS = [(i + 1) % 10000 for i in range(10000)]
 L = [(i % 1000) * 10 + i // 1000 for i in range(10000)]
 R = [(i % 10) * 1000 + i // 10 for i in range(10000)]
 
 
 def bfs():
-    vfa = [0] * 10000  # visited from a(밑에는 b)
-    vfb = [0] * 10000
-    before_d = [0] * 10000
+    vfa = {}  # visited from a(밑에는 b)
+    vfb = {}
+    before_d = {}
     vfa[a] = -1
     vfb[b] = -1
     aq = [a]
@@ -26,24 +25,24 @@ def bfs():
         naq = []
         for num in aq:
             d_num = D[num]
-            if not vfa[d_num]:
+            if d_num not in vfa:
                 vfa[d_num] = 1
-                naq.append(d_num)
                 before_d[d_num] = num
+                naq.append(d_num)
             s_num = S[num]
-            if not vfa[s_num]:
+            if s_num not in vfa:
                 vfa[s_num] = 2
                 naq.append(s_num)
             l_num = L[num]
-            if not vfa[l_num]:
+            if l_num not in vfa:
                 vfa[l_num] = 3
                 naq.append(l_num)
             r_num = R[num]
-            if not vfa[r_num]:
+            if r_num not in vfa:
                 vfa[r_num] = 4
                 naq.append(r_num)
             for n_num in (d_num, s_num, l_num, r_num):
-                if vfb[n_num]:
+                if n_num in vfb:
                     temp = [None] * (a_step + b_step)
                     n = n_num
                     for idx in range(a_step - 1, -1, -1):
@@ -52,7 +51,7 @@ def bfs():
                         if order == 1:
                             n = before_d[n]
                         elif order == 2:
-                            n = revS[n]
+                            n = (n + 1) % 10000
                         elif order == 3:
                             n = R[n]
                         else:
@@ -79,32 +78,32 @@ def bfs():
             candidates = []
             if not num & 1:
                 d_num = num >> 1
-                if not vfb[d_num]:
+                if d_num not in vfb:
                     vfb[d_num] = 1
                     nbq.append(d_num)
                 candidates.append(d_num)
                 d_num += 5000
-                if not vfb[d_num]:
+                if d_num not in vfb:
                     vfb[d_num] = 1
                     nbq.append(d_num)
                 candidates.append(d_num)
-            s_num = revS[num]
-            if not vfb[s_num]:
+            s_num = (num + 1) % 10000
+            if s_num not in vfb:
                 vfb[s_num] = 2
                 nbq.append(s_num)
                 candidates.append(s_num)
             l_num = R[num]
-            if not vfb[l_num]:
+            if l_num not in vfb:
                 vfb[l_num] = 3
                 nbq.append(l_num)
                 candidates.append(l_num)
             r_num = L[num]
-            if not vfb[r_num]:
+            if r_num not in vfb:
                 vfb[r_num] = 4
                 nbq.append(r_num)
                 candidates.append(r_num)
             for n_num in candidates:
-                if vfa[n_num]:
+                if n_num in vfa:
                     temp = [None] * (a_step + b_step)
                     n = n_num
                     for idx in range(a_step - 1, -1, -1):
@@ -113,7 +112,7 @@ def bfs():
                         if order == 1:
                             n = before_d[n]
                         elif order == 2:
-                            n = revS[n]
+                            n = (n + 1) % 10000
                         elif order == 3:
                             n = R[n]
                         else:
@@ -135,8 +134,8 @@ def bfs():
         bq = nbq
 
 
-ans = []
 T = int(input())
+ans = []
 for tc in range(1, T + 1):
     a, b = map(int, input().split())
     bfs()
