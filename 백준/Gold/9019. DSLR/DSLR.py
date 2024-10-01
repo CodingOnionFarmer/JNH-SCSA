@@ -2,12 +2,12 @@ import os, io
 
 input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
-
 # meet in the middle
 
 dslr = ' DSLR'
 D = [(i << 1) % 10000 for i in range(10000)]
 S = [(i - 1) % 10000 for i in range(10000)]
+revS = [(i + 1) % 10000 for i in range(10000)]
 L = [(i % 1000) * 10 + i // 1000 for i in range(10000)]
 R = [(i % 10) * 1000 + i // 10 for i in range(10000)]
 
@@ -52,7 +52,7 @@ def bfs():
                         if order == 1:
                             n = before_d[n]
                         elif order == 2:
-                            n = (n + 1) % 10000
+                            n = revS[n]
                         elif order == 3:
                             n = R[n]
                         else:
@@ -88,7 +88,7 @@ def bfs():
                     vfb[d_num] = 1
                     nbq.append(d_num)
                 candidates.append(d_num)
-            s_num = (num + 1) % 10000
+            s_num = revS[num]
             if not vfb[s_num]:
                 vfb[s_num] = 2
                 nbq.append(s_num)
@@ -113,7 +113,7 @@ def bfs():
                         if order == 1:
                             n = before_d[n]
                         elif order == 2:
-                            n = (n + 1) % 10000
+                            n = revS[n]
                         elif order == 3:
                             n = R[n]
                         else:
@@ -135,8 +135,8 @@ def bfs():
         bq = nbq
 
 
-T = int(input())
 ans = []
+T = int(input())
 for tc in range(1, T + 1):
     a, b = map(int, input().split())
     bfs()
