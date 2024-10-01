@@ -2,6 +2,7 @@ import os, io
 
 input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
+
 # meet in the middle
 
 dslr = ' DSLR'
@@ -12,9 +13,9 @@ R = [(i % 10) * 1000 + i // 10 for i in range(10000)]
 
 
 def bfs():
-    vfa = {}  # visited from a(밑에는 b)
-    vfb = {}
-    before_d = {}
+    vfa = [0] * 10000  # visited from a(밑에는 b)
+    vfb = [0] * 10000
+    before_d = [0] * 10000
     vfa[a] = -1
     vfb[b] = -1
     aq = [a]
@@ -25,24 +26,24 @@ def bfs():
         naq = []
         for num in aq:
             d_num = D[num]
-            if d_num not in vfa:
+            if not vfa[d_num]:
                 vfa[d_num] = 1
-                before_d[d_num] = num
                 naq.append(d_num)
+                before_d[d_num] = num
             s_num = S[num]
-            if s_num not in vfa:
+            if not vfa[s_num]:
                 vfa[s_num] = 2
                 naq.append(s_num)
             l_num = L[num]
-            if l_num not in vfa:
+            if not vfa[l_num]:
                 vfa[l_num] = 3
                 naq.append(l_num)
             r_num = R[num]
-            if r_num not in vfa:
+            if not vfa[r_num]:
                 vfa[r_num] = 4
                 naq.append(r_num)
             for n_num in (d_num, s_num, l_num, r_num):
-                if n_num in vfb:
+                if vfb[n_num]:
                     temp = [None] * (a_step + b_step)
                     n = n_num
                     for idx in range(a_step - 1, -1, -1):
@@ -78,32 +79,32 @@ def bfs():
             candidates = []
             if not num & 1:
                 d_num = num >> 1
-                if d_num not in vfb:
+                if not vfb[d_num]:
                     vfb[d_num] = 1
                     nbq.append(d_num)
                 candidates.append(d_num)
                 d_num += 5000
-                if d_num not in vfb:
+                if not vfb[d_num]:
                     vfb[d_num] = 1
                     nbq.append(d_num)
                 candidates.append(d_num)
             s_num = (num + 1) % 10000
-            if s_num not in vfb:
+            if not vfb[s_num]:
                 vfb[s_num] = 2
                 nbq.append(s_num)
                 candidates.append(s_num)
             l_num = R[num]
-            if l_num not in vfb:
+            if not vfb[l_num]:
                 vfb[l_num] = 3
                 nbq.append(l_num)
                 candidates.append(l_num)
             r_num = L[num]
-            if r_num not in vfb:
+            if not vfb[r_num]:
                 vfb[r_num] = 4
                 nbq.append(r_num)
                 candidates.append(r_num)
             for n_num in candidates:
-                if n_num in vfa:
+                if vfa[n_num]:
                     temp = [None] * (a_step + b_step)
                     n = n_num
                     for idx in range(a_step - 1, -1, -1):
