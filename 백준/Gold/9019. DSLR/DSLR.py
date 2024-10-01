@@ -1,3 +1,8 @@
+import os, io
+
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
+
 # meet in the middle
 
 dslr = ' DSLR'
@@ -10,7 +15,7 @@ R = [(i % 10) * 1000 + i // 10 for i in range(10000)]
 def bfs():
     vfa = [0] * 10000  # visited from a(밑에는 b)
     vfb = [0] * 10000
-    before_D = [0] * 10000
+    before_d = [0] * 10000
     vfa[a] = -1
     vfb[b] = -1
     aq = [a]
@@ -24,7 +29,7 @@ def bfs():
             if not vfa[d_num]:
                 vfa[d_num] = 1
                 naq.append(d_num)
-                before_D[d_num] = num
+                before_d[d_num] = num
             s_num = S[num]
             if not vfa[s_num]:
                 vfa[s_num] = 2
@@ -45,7 +50,7 @@ def bfs():
                         order = vfa[n]
                         temp[idx] = dslr[order]
                         if order == 1:
-                            n = before_D[n]
+                            n = before_d[n]
                         elif order == 2:
                             n = (n + 1) % 10000
                         elif order == 3:
@@ -106,7 +111,7 @@ def bfs():
                         order = vfa[n]
                         temp[idx] = dslr[order]
                         if order == 1:
-                            n = before_D[n]
+                            n = before_d[n]
                         elif order == 2:
                             n = (n + 1) % 10000
                         elif order == 3:
