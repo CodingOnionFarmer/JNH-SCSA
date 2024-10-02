@@ -1,4 +1,5 @@
-# DFS, Greedy
+# DFS
+# Greedy
 
 n, k = map(int, input().split())
 digits = []
@@ -57,7 +58,7 @@ else:
             ans += digit
         print(ans)
     else:
-        best = digits[:]
+        best = [0] * d
         dfs(0)
         ans = 0
         for digit in best:
