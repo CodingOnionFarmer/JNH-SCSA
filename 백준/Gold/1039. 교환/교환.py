@@ -8,14 +8,16 @@ while n:
 digits.reverse()
 d = len(digits)
 maximal_arr = sorted(digits, reverse=True)
+diff_cnt = 0
 has_same_num = False
 before = -1
-best = digits[:]
 end_flag = False
 for i, digit in enumerate(maximal_arr):
     if digit == before:
         has_same_num = True
     before = digit
+    if digit != digits[i]:
+        diff_cnt += 1
 
 
 def dfs(depth):
@@ -48,5 +50,17 @@ def dfs(depth):
 if d == 1 or d == 2 and not maximal_arr[1]:
     print(-1)
 else:
-    dfs(0)
-    print(''.join(map(str, best)))
+    if diff_cnt <= k + 1 and has_same_num:
+        ans = 0
+        for digit in maximal_arr:
+            ans *= 10
+            ans += digit
+        print(ans)
+    else:
+        best = digits[:]
+        dfs(0)
+        ans = 0
+        for digit in best:
+            ans *= 10
+            ans += digit
+        print(ans)
