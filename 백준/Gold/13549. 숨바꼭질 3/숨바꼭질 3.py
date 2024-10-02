@@ -4,32 +4,37 @@ if n >= k:
 else:
     visited = [False] * 100001
     q = []
-    while n <= 100000:
-        if visited[n]:
+    while True:
+        visited[k] = True
+        q.append(k)
+        if k & 1:
             break
-        visited[n] = True
-        q.append(n)
-        n <<= 1
+        k >>= 1
     step = 0
-    while not visited[k]:
+    while not visited[n]:
         step += 1
         nq = []
         for cp in q:
             np = cp - 1
             if np != -1:
-                while np <= 100000:
+                while True:
                     if visited[np]:
                         break
                     visited[np] = True
                     nq.append(np)
-                    np <<= 1
-                    
+                    if np & 1:
+                        break
+                    np >>= 1
+
             np = cp + 1
-            while np <= 100000:
-                if visited[np]:
-                    break
-                visited[np] = True
-                nq.append(np)
-                np <<= 1
+            if np != 100001:
+                while True:
+                    if visited[np]:
+                        break
+                    visited[np] = True
+                    nq.append(np)
+                    if np & 1:
+                        break
+                    np >>= 1
         q = nq
     print(step)
