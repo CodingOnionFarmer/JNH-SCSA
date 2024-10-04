@@ -1,95 +1,60 @@
-import os, io
+import sys
 
-input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+input = sys.stdin.readline
 
-blocks = [[[None] * 4 for x in range(4)] for t in range(4)]  # t가 0인 곳은 안 쓸 것
-for x in range(4):
-    for y in range(4):
-        blocks[1][x][y] = (1 << y, 1, 1 << x, 1)
-        blocks[2][x][y] = (3 << y, 1, 1 << x, 2)
-        blocks[3][x][y] = (1 << y, 2, 3 << x, 1)
-
-cnt_blocks = [0] * 16
-for digit in range(4):
-    bit = 1 << digit
-    for i in range(16):
-        if i & bit:
-            cnt_blocks[i] += 1
-
-n = int(input())
-G_board = [0] * 6
-B_board = [0] * 6
-
+yellow = 0
+red = 0
 score = 0
-for turn in range(n):
+y_type = (0, 65536, 196608, 1114112)
+r_type = (0, 65536, 1114112, 196608)
+check = (15, 240, 3840, 61440)
+erase_down = (0, 15, 255, 4095)
+over_check = 65536
+
+k = int(input())
+for _ in range(k):
     t, x, y = map(int, input().split())
-    green, gs, blue, bs = blocks[t][x][y]
+    y_bit = (1 << y) * y_type[t]
+    r_bit = (1 << x) * r_type[t]
 
-    dropped_line = 1
-    for drop in range(4):
-        if green & G_board[dropped_line + 1]:
+    for down in range(4):
+        if y_bit >> 4 & yellow:
             break
-        dropped_line += 1
-    for line in range(dropped_line, dropped_line - gs, -1):
-        G_board[line] |= green
-    if G_board[dropped_line] == 15:
+        y_bit >>= 4
+    yellow |= y_bit
+    erase = []
+    for i, check_bit in enumerate(check):
+        if yellow & check_bit == check_bit:
+            erase.append(i)
+    while erase:
         score += 1
-        erased = 1
-        if gs == 2 and G_board[dropped_line - 1] == 15:
-            score += 1
-            erased += 1
-        for line in range(dropped_line, 1, -1):
-            G_board[line] = G_board[line - erased]
-        G_board[0] = 0
-        G_board[1] = 0
-    elif gs == 2 and G_board[dropped_line - 1] == 15:
-        score += 1
-        for line in range(dropped_line - 1, 1, -1):
-            G_board[line] = G_board[line - 1]
-        G_board[0] = 0
-        G_board[1] = 0
+        i = erase.pop()
+        yellow = (yellow & erase_down[i]) | (yellow >> (i * 4 + 4) << (i * 4))
+    while yellow >= over_check:
+        yellow >>= 4
 
-    if G_board[1]:
-        drop = 1
-        if G_board[0]:
-            drop += 1
-        for line in range(5, 1, -1):
-            G_board[line] = G_board[line - drop]
-        G_board[0] = 0
-        G_board[1] = 0
-
-    dropped_line = 1
-    for drop in range(4):
-        if blue & B_board[dropped_line + 1]:
+    for down in range(4):
+        if r_bit >> 4 & red:
             break
-        dropped_line += 1
-    for line in range(dropped_line, dropped_line - bs, -1):
-        B_board[line] |= blue
-    if B_board[dropped_line] == 15:
+        r_bit >>= 4
+    red |= r_bit
+    erase = []
+    for i, check_bit in enumerate(check):
+        if red & check_bit == check_bit:
+            erase.append(i)
+    while erase:
         score += 1
-        erased = 1
-        if bs == 2 and B_board[dropped_line - 1] == 15:
-            score += 1
-            erased += 1
-        for line in range(dropped_line, 1, -1):
-            B_board[line] = B_board[line - erased]
-        B_board[0] = 0
-        B_board[1] = 0
-    elif bs == 2 and B_board[dropped_line - 1] == 15:
-        score += 1
-        for line in range(dropped_line - 1, 1, -1):
-            B_board[line] = B_board[line - 1]
-        B_board[0] = 0
-        B_board[1] = 0
+        i = erase.pop()
+        red = (red & erase_down[i]) | (red >> (i * 4 + 4) << (i * 4))
+    while red >= over_check:
+        red >>= 4
 
-    if B_board[1]:
-        drop = 1
-        if B_board[0]:
-            drop += 1
-        for line in range(5, 1, -1):
-            B_board[line] = B_board[line - drop]
-        B_board[0] = 0
-        B_board[1] = 0
+blocks = 0
+for _ in range(16):
+    blocks += yellow & 1
+    yellow >>= 1
+    blocks += red & 1
+    red >>= 1
 
 print(score)
-print(sum(cnt_blocks[line] for line in G_board) + sum(cnt_blocks[line] for line in B_board))
+print(blocks)
