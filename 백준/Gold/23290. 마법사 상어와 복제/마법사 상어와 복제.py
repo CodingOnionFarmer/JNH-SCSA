@@ -1,116 +1,68 @@
-"""
-BOJ : 마법사 상어와 복제
+directions = ((-1, 0), (0, -1), (1, 0), (0, 1))
+eight_d = ((0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1))
+ccw = (7, 0, 1, 2, 3, 4, 5, 6)
 
-시작 시간 : 9시 01분
-구상 완료 : 9시 14분
-제출 시간 : 10시 16분
-"""
-
-m, s = map(int, input().split())
-
-# 반시계는 -1
-dir8 = ((1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0))
-
-# 상 좌 하 우
-dir4 = ((-1, 0), (0, -1), (1, 0), (0, 1))
-
-# board[i][j][d]는 i,j칸에 d방향보고있는 물고기 수 (d = 8은 0으로)
-board = [[[0] * 8 for __ in range(4)] for _ in range(4)]
-
-for i in range(m):
-    fx, fy, fd = map(int, input().split())
-    board[fx - 1][fy - 1][fd % 8] += 1
-
-sx, sy = map(int, input().split())
-sx -= 1
-sy -= 1
-scent = [[0] * 4 for _ in range(4)]
-
-for practice in range(s):
-    # 1. 복제 마법 시전
-    temp = [[block[:] for block in line] for line in board]
-
-    # 2. 모든 물고기 한 칸 이동
-    # 하기 전에 못 가는 칸 표시 (패딩 쳐서 oob도 거르기)
-    can_go = [[True] * 4 + [False] for _ in range(4)] + [[False] * 5]
+m, t = map(int, input().split())
+monsters = [[[0] * 8 for _ in range(4)] for _ in range(4)]
+dead_body = [[-3] * 4 for _ in range(4)]
+oob = [[False] * 4 + [True] for _ in range(4)] + [[True] * 5]
+for _ in range(m):
+    r, c, d = map(int, input().split())
+    r -= 1
+    c -= 1
+    d -= 1
+    monsters[r][c][d] += 1
+    
+pi, pj = map(int, input().split())
+pi -= 1
+pj -= 1
+    
+for turn in range(t):
+    copy_monsters = [[block[:] for block in line] for line in monsters]
+    temp = [[[0] * 8 for _ in range(4)] for _ in range(4)]
     for i in range(4):
         for j in range(4):
-            if scent[i][j]:
-                can_go[i][j] = False
-    can_go[sx][sy] = False
-    # 8방향 물고기들을 반시계 방향으로 회전
-    # 하기 전에 board를 대체할 새 배열(move) 선언
-    move = [[[0] * 8 for __ in range(4)] for _ in range(4)]
-    for i in range(4):
-        for j in range(4):
-            # i,j에서 8방향 중 갈 수 있는 곳 하나라도 있으면 모두 나가게 된다.
-            if any(can_go[i + di][j + dj] for (di, dj) in dir8):
-                fishes = 0
-                for d in range(7, -1, -1):
-                    di, dj = dir8[d]
-                    if can_go[i + di][j + dj]:
-                        move[i + di][j + dj][d] += fishes + board[i][j][d]
-                        fishes = 0
-                    else:
-                        fishes += board[i][j][d]
-                if fishes:
-                    for d in range(7, -1, -1):
-                        di, dj = dir8[d]
-                        if can_go[i + di][j + dj]:
-                            move[i + di][j + dj][d] += fishes
-                            break
-            # 8방향 다 못가면 그대로
-            else:
-                for d in range(8):
-                    move[i][j][d] += board[i][j][d]
-
-    # 움직인 상태를 원본 board로 복사
-    board = [[block[:] for block in line] for line in move]
-
-    # 3. 상어 3칸 이동
-    # 방문처리를 하면 안 되면서 중복 방문할 때 물고기 수는 안 세야 한다는 점이 핵심이다. (상 하 상 같은 move가 최선일 수도 있다)
-    fishes_in_the_block = [[sum(block) for block in line] for line in board]
-    # 하기 전에 못 가는 칸 표시 (패딩 쳐서 oob 거르기) : 편의상 아까 한 거랑 반대로
-    cant_go = [[False] * 4 + [True] for _ in range(4)] + [[True] * 5]
-    will_move = [-1, -1, -1]
-    erase_most = -1
-    for move1, (dx1, dy1) in enumerate(dir4):
-        nx1, ny1 = sx + dx1, sy + dy1
-        if cant_go[nx1][ny1]:
-            continue
-        for move2, (dx2, dy2) in enumerate(dir4):
-            nx2, ny2 = nx1 + dx2, ny1 + dy2
-            if cant_go[nx2][ny2]:
-                continue
-            for move3, (dx3, dy3) in enumerate(dir4):
-                nx3, ny3 = nx2 + dx3, ny2 + dy3
-                if cant_go[nx3][ny3]:
+            for d, cnt in enumerate(monsters[i][j]):
+                if not cnt:
                     continue
-                # set으로 중복방문점 제거하고, 제거한 물고기 수 계산
-                erase = sum(fishes_in_the_block[x][y] for x, y in {(nx1, ny1), (nx2, ny2), (nx3, ny3)})
-                if erase > erase_most:
-                    erase_most = erase
-                    will_move = [move1, move2, move3]
-    for move in will_move:
-        dx, dy = dir4[move]
-        sx += dx
-        sy += dy
-        # 냄새 남기려면 칸에 물고기가 있어야 된다
-        if any(board[sx][sy]):
-            scent[sx][sy] = 3
-        # 해당 칸 물고기 전부 삭제
-        board[sx][sy] = [0] * 8
+                for rotate_ccw_45 in range(8):
+                    di, dj = eight_d[d]
+                    ni, nj = i + di, j + dj
+                    if oob[ni][nj] or (ni == pi and nj == pj) or dead_body[ni][nj] >= turn - 2:
+                        d = ccw[d]
+                        continue
+                    temp[ni][nj][d] += cnt
+                    break
+                else:
+                    temp[i][j][d] += cnt
+    temp_cnt = [[sum(block) for block in line] for line in temp]
+    most_kill = -1
+    best_move = ((0, 0), (0, 0), (0, 0))
 
-    # 4. 두 턴 전에 생긴 냄새 삭제(를 하기 위해 scent를 선언 시 3으로 두고 1씩 줄인다)
-    for i in range(4):
-        for j in range(4):
-            if scent[i][j]:
-                scent[i][j] -= 1
+    for move1 in range(4):
+        di1, dj1 = directions[move1]
+        ni1, nj1 = pi + di1, pj + dj1
+        if oob[ni1][nj1]:
+            continue
+        for move2 in range(4):
+            di2, dj2 = directions[move2]
+            ni2, nj2 = ni1 + di2, nj1 + dj2
+            if oob[ni2][nj2]:
+                continue
+            for move3 in range(4):
+                di3, dj3 = directions[move3]
+                ni3, nj3 = ni2 + di3, nj2 + dj3
+                if oob[ni3][nj3]:
+                    continue
+                kill = sum(temp_cnt[i][j] for i, j in {(ni1, nj1), (ni2, nj2), (ni3, nj3)})
+                if kill > most_kill:
+                    most_kill = kill
+                    best_move = ((ni1, nj1), (ni2, nj2), (ni3, nj3))
+    for i, j in best_move:
+        if any(temp[i][j]):
+            dead_body[i][j] = turn
+            temp[i][j] = [0] * 8
+    pi, pj = best_move[2]
+    monsters = [[[copy_monsters[i][j][d] + temp[i][j][d] for d in range(8)] for j in range(4)] for i in range(4)]
 
-    # 5. 복제 마법 적용
-    for i in range(4):
-        for j in range(4):
-            for d in range(8):
-                board[i][j][d] += temp[i][j][d]
-
-print(sum(sum(sum(block) for block in line) for line in board))
+print(sum(sum(sum(block) for block in line) for line in monsters))
