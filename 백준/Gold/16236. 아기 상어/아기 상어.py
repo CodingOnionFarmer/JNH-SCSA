@@ -1,18 +1,3 @@
-"""
-BOJ : 아기 상어
-코드트리 : 전투 로봇
-
-특이사항 : 2024.09.04에 풀이 (백준과 코드트리에 다른 문제 올라감)
-시작 시간 : 4시 12분
-구상 완료 : 4시 16분
-제출 시간 : 4시 27분
-
-
-
-연습 환경 : 매우 동요된 상태(미치기 직전)에서도 문제를 잘 풀 수 있을까?
-
-"""
-
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
 n = int(input())
@@ -50,9 +35,8 @@ while True:
                         can_kill.append((ni, nj))
         q = nq
     if can_kill:
-        can_kill.sort()
         time += step
-        ci, cj = can_kill[0]
+        ci, cj = min(can_kill)
         board[ci][cj] = 0
         exp += 1
         if exp == level:
