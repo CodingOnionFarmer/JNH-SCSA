@@ -1,7 +1,9 @@
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
 n = int(input())
-board = [list(map(int, input().split())) + [100] for _ in range(n)] + [[100] * n]
+board = [list(map(int, input().split())) for _ in range(n)]
+adj = [[[(i + di, j + dj) for di, dj in directions if 0 <= i + di < n and 0 <= j + dj < n] for j in range(n)] for i in
+       range(n)]
 level = 2
 exp = 0
 time = 0
@@ -22,8 +24,7 @@ while True:
         step += 1
         nq = []
         for i, j in q:
-            for di, dj in directions:
-                ni, nj = i + di, j + dj
+            for ni, nj in adj[i][j]:
                 num = board[ni][nj]
                 if num > level:
                     continue
