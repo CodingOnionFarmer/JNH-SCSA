@@ -1,3 +1,7 @@
+import os, io
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
+answer = []
 while True:
     n, m = map(int, input().split())
     if not n:
@@ -35,4 +39,6 @@ while True:
         for width, si in stack:
             if width * (n - si) > biggest_rect:
                 biggest_rect = width * (n - si)
-    print(biggest_rect)
+    answer.append(biggest_rect)
+    
+print(*answer, sep='\n')
