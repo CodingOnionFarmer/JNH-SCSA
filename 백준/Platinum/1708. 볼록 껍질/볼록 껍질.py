@@ -1,7 +1,7 @@
 from functools import cmp_to_key
-import os, io
+import sys
 
-input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+input = sys.stdin.readline
 
 
 def ccw(p, p1, p2):
