@@ -1,59 +1,56 @@
-import sys
+import os, io
 
-input = sys.stdin.readline
-
-
-def print(something):
-    sys.stdout.write(str(something) + '\n')
-
-
-class SegmentTree:
-    def __init__(self, arr):
-        self.arr = arr
-        self.tree = [0] * (4 * len(arr))
-        self.build(1, 0, len(arr) - 1)
-
-    def build(self, node, start, end):
-        if start == end:
-            self.tree[node] = self.arr[start]
-        else:
-            mid = (start + end) // 2
-            self.build(2 * node, start, mid)
-            self.build(2 * node + 1, mid + 1, end)
-            self.tree[node] = self.tree[2 * node] + self.tree[2 * node + 1]
-
-    def query1(self, index, value):
-        diff = value - self.arr[index]
-        self.arr[index] = value
-        self.update(1, 0, len(self.arr) - 1, index, diff)
-
-    def update(self, node, start, end, index, diff):
-        if index < start or index > end:
-            return
-        self.tree[node] += diff
-        if start != end:
-            mid = (start + end) // 2
-            self.update(2 * node, start, mid, index, diff)
-            self.update(2 * node + 1, mid + 1, end, index, diff)
-
-    def query2(self, left, right):
-        return self.get_sum(1, 0, len(self.arr) - 1, left, right)
-
-    def get_sum(self, node, start, end, left, right):
-        if left > end or right < start:
-            return 0
-        if left <= start and right >= end:
-            return self.tree[node]
-        mid = (start + end) // 2
-        return self.get_sum(2 * node, start, mid, left, right) + self.get_sum(2 * node + 1, mid + 1, end, left, right)
-
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
 n, m, k = map(int, input().split())
-arr = [int(input()) for _ in range(n)]
-segTree = SegmentTree(arr)
-for i in range(m + k):
+numbers = [0] + [int(input()) for _ in range(n)]
+seg_sum = [0] * (n << 2)
+
+
+def build(start, end, node):
+    if start == end:
+        seg_sum[node] = numbers[start]
+        return
+    mid = (start + end) >> 1
+    left_child = node << 1
+    right_child = left_child | 1
+    build(start, mid, left_child)
+    build(mid + 1, end, right_child)
+    seg_sum[node] = seg_sum[left_child] + seg_sum[right_child]
+
+
+def find_sum(start, end, node, left, right):  # start, end는 찾으려는 범위이고, left,right는 node가 커버하는 범위이다.
+    if right < start or left > end:
+        return 0
+    if start <= left and right <= end:
+        return seg_sum[node]
+    if left == right:
+        return numbers[left]
+    mid = (left + right) >> 1
+    left_child = node << 1
+    right_child = left_child | 1
+    return find_sum(start, end, left_child, left, mid) + find_sum(start, end, right_child, mid + 1, right)
+
+
+def update(start, end, node, idx, value):
+    if start > idx or end < idx:
+        return
+    if start == end:
+        seg_sum[node] = value
+        return
+    mid = (start + end) >> 1
+    left_child = node << 1
+    right_child = left_child | 1
+    update(start, mid, left_child, idx, value)
+    update(mid + 1, end, right_child, idx, value)
+    seg_sum[node] = seg_sum[left_child] + seg_sum[right_child]
+
+
+build(1, n, 1)
+for _ in range(m + k):
     a, b, c = map(int, input().split())
     if a == 1:
-        segTree.query1(b - 1, c)
+        numbers[b] = c
+        update(1, n, 1, b, c)
     else:
-        print(segTree.query2(b - 1, c - 1))
+        print(find_sum(b, c, 1, 1, n))
