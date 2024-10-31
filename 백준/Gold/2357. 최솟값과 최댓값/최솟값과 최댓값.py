@@ -1,54 +1,42 @@
-import sys
+import os, io
 
-input = sys.stdin.readline
-
-
-def print(ans):
-    sys.stdout.write(str(ans[0]) + ' ' + str(ans[1]) + '\n')
-
-
-class SegmentTree:
-    def __init__(self, arr):
-        self.arr = arr
-        self.tree = [[0, 0] for _ in range(4 * len(arr))]
-        self.build(1, 0, len(arr) - 1)
-
-    def build(self, node, start, end):
-        if start == end:
-            self.tree[node][0] = self.arr[start]
-            self.tree[node][1] = self.arr[start]
-        else:
-            mid = (start + end) // 2
-            self.build(2 * node, start, mid)
-            self.build(2 * node + 1, mid + 1, end)
-            self.tree[node][0] = min(self.tree[2 * node][0], self.tree[2 * node + 1][0])
-            self.tree[node][1] = max(self.tree[2 * node][1], self.tree[2 * node + 1][1])
-
-    def query(self, left, right):
-        return self.get_min(1, 0, len(self.arr) - 1, left, right), self.get_max(1, 0, len(self.arr) - 1, left, right)
-
-    def get_min(self, node, start, end, left, right):
-        if left > end or right < start:
-            return 1000000001
-        if left <= start and right >= end:
-            return self.tree[node][0]
-        mid = (start + end) // 2
-        return min(self.get_min(2 * node, start, mid, left, right),
-                   self.get_min(2 * node + 1, mid + 1, end, left, right))
-
-    def get_max(self, node, start, end, left, right):
-        if left > end or right < start:
-            return -1
-        if left <= start and right >= end:
-            return self.tree[node][1]
-        mid = (start + end) // 2
-        return max(self.get_max(2 * node, start, mid, left, right),
-                   self.get_max(2 * node + 1, mid + 1, end, left, right))
-
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
 n, m = map(int, input().split())
-arr = [int(input()) for _ in range(n)]
-segTree = SegmentTree(arr)
-for i in range(m):
+numbers = [0] + [int(input()) for _ in range(n)]
+seg_min = [0] * (n << 2)
+seg_max = [0] * (n << 2)
+
+
+def build(start, end, node):
+    if start == end:
+        seg_min[node] = seg_max[node] = numbers[start]
+        return
+    mid = (start + end) >> 1
+    left_child = node << 1
+    right_child = left_child | 1
+    build(start, mid, left_child)
+    build(mid + 1, end, right_child)
+    seg_min[node] = min(seg_min[left_child], seg_min[right_child])
+    seg_max[node] = max(seg_max[left_child], seg_max[right_child])
+
+
+def find_minmax(start, end, node, left, right):  # start, end는 찾으려는 범위이고, left,right는 node가 커버하는 범위이다.
+    if right < start or left > end:
+        return 1000000001, 0
+    if start <= left and right <= end:
+        return seg_min[node], seg_max[node]
+    if left == right:
+        return numbers[left]
+    mid = (left + right) >> 1
+    left_child = node << 1
+    right_child = left_child | 1
+    left_min, left_max = find_minmax(start, end, left_child, left, mid)
+    right_min, right_max = find_minmax(start, end, right_child, mid + 1, right)
+    return min(left_min, right_min), max(left_max, right_max)
+
+
+build(1, n, 1)
+for _ in range(m):
     a, b = map(int, input().split())
-    print(segTree.query(a - 1, b - 1))
+    print(*find_minmax(a, b, 1, 1, n))
