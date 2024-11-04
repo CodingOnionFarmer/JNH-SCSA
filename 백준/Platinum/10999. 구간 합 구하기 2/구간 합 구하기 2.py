@@ -2,7 +2,7 @@
 
 import os, io
 
-# input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
 n, m, k = map(int, input().split())
 numbers = [0] + [int(input()) for _ in range(n)]
