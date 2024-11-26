@@ -2,7 +2,7 @@
 어떤 양방향 루트의 양 끝은 둘 다 블랙홀이거나, 양끝이 이어진 무한루프이다.
 블랙홀에서 나와서 출발하면 블랙홀으로 반드시 들어간다.
 """
-
+ 
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))  # 우 하 좌 상
 opposite = (2, 3, 0, 1)
 blocks = (
@@ -13,7 +13,7 @@ blocks = (
     (3, 2, 0, 1),
     (2, 3, 0, 1),
 )
-
+ 
 T = int(input())
 for tc in range(1, T + 1):
     n = int(input())
@@ -31,7 +31,7 @@ for tc in range(1, T + 1):
                     wormholes.pop(num)
                 else:
                     wormholes[num] = (i, j)
-
+ 
     best_score = 0
     route_num = 0
     for i in range(n):
@@ -74,7 +74,7 @@ for tc in range(1, T + 1):
                                 best_score = score[rx][ry][rd]
                                 if best_score == crashed:
                                     break
-
+ 
     for i in range(n):
         for j in range(n):
             if not board[i][j]:
@@ -99,7 +99,7 @@ for tc in range(1, T + 1):
                             dx, dy = directions[cd]
                         else:
                             cx, cy = wormholes[(cx, cy)]
-
+ 
                     if crashed <= best_score:
                         for rx, ry, rd, rc in route:
                             score[rx][ry][rd] = 0
@@ -121,5 +121,5 @@ for tc in range(1, T + 1):
                                 best_score = score[rx][ry][rd]
                                 if best_score == crashed:
                                     break
-
+ 
     print(f'#{tc}', best_score)
