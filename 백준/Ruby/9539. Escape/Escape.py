@@ -1,24 +1,6 @@
-"""
-생각해 볼 반례
-1
-6 6
-10 -10 5 -10 20 -5
-1 2
-2 3
-3 4
-4 5
-2 6
-
-답 : escaped
--10 20 (4,5번 노드)의 덩어리(풀이 기준 loss -10, gain 10)를 부모에 합쳐버리면,
-원래 loss -10 gain -5여야 될 것이 loss -15 gain 5가 된다. gain은 늘어나지만 loss의 허들이 늘어나 아예 못 지나간다.
-해결방법 : 부모가 gain이 음수인 노드면 바로 합치지 말고 따로 자료구조에 달아놓고 기록하기
--> 이걸로 빡센듯?
-
-새로운 아이디어 : 반드시 거쳐야 되는 직선경로(입구->출구) 노드 하나씩 가지뻗기 하면서 위 로직 적용
-"""
-
-import heapq
+import os, io, sys, heapq
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+print = sys.stdout.write
 
 
 def find(x):
@@ -29,6 +11,8 @@ def find(x):
     return hx
 
 
+fail = 'trapped\n'
+success = 'escaped\n'
 T = int(input())
 for tc in range(T):
     n, t = map(int, input().split())
@@ -92,7 +76,7 @@ for tc in range(T):
     for idx, node in enumerate(root_route[:-1]):
         l, g = loss[node], gain[node]
         if l + nowHp < 0:
-            print('trapped')
+            print(fail)
             break
         nowHp += g
         head[node] = 1
@@ -120,6 +104,6 @@ for tc in range(T):
                         heapq.heappush(q, (-loss[ph], ph))
     else:
         if loss[ec] + nowHp >= 0:
-            print('escaped')
+            print(success)
         else:
-            print('trapped')
+            print(fail)
