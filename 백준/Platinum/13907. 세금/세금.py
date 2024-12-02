@@ -1,6 +1,6 @@
-import os, io, heapq
+import sys, heapq
 
-input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+input = sys.stdin.readline
 
 n, m, k = map(int, input().split())
 s, d = map(int, input().split())
